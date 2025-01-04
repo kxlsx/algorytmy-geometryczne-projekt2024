@@ -27,6 +27,7 @@
 \usepackage[center]{caption}
 \usepackage{subcaption}
 \usepackage{siunitx}
+\usepackage[mathscr]{euscript}
 
 \sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
 
@@ -38,21 +39,159 @@
     \includegraphics[scale=0.16]{./agh_logo_text_asym.jpg}
 }
 \fancyhead[R]{
-    Lab 4 - Przecinanie odcinków 
-    | Łukasz Dragon 25.11.2024
+    Lokalizacja punktów w przestrzeni dwuwymiarowej - metoda trapezowa
+    \\
+    Łukasz Dragon, Rafał Babski
 }
 
 \begin{document}
 
 \section{Wstęp}
-
-\section{Dokumentacja}
-
-\subsection{Część użytkownika}
-
-\subsection{Część techniczna}
+Celem projektu była implementacja algorytmu rozwiązującego
+problem lokalizacji punktu w przestrzeni dwuwymiarowej 
+metodą trapezową. W \hyperlink{section.2}{sekcji 2} znajduje się opis teoretyczny
+działania algorytmu, wizualizacja wyników na zbiorach testowych
+oraz analiza efektywności działania algorytmu. 
+\hyperlink{section.3}{Sekcja 3} zawiera dokumentację załączonego w projekcie programu.
 
 \section{Sprawozdanie}
+
+\subsection{Wstęp teoretyczny}
+
+\subsubsection{Opis problemu}
+Problem lokalizacji punktu w przestrzeni dwuwymiarowej
+można sformułować następująco:
+
+Niech $\mathscr{S}$ oznacza podział przestrzeni dwuwymiarowej
+zawierający $n$ krawędzi. Zapytanie o lokalizację punktu w $\mathscr{S}$
+oznacza znalezienie takiej ściany $f$ zawartej w $\mathscr{S}$,
+w której znajduje się zadany punkt $q$. Celem algorytmu jest
+stworzenie takiej reprezentacji $\mathscr{S}$, która pozwala
+odpowiadać na zapytanie lokalizacji punktu w jak najmniejszym
+czasie. Stworzona przez nas reprezentacja powinna także 
+zajmować jak najmniej miejsca w pamięci.
+
+\subsubsection{Podział trapezowy}
+Metoda trapezowa, nazywana także podziałem trapezowym,
+polega na stworzeniu mapy trapezowej $\mathscr{T}(S)$
+dla danego zbioru $S$ zawierającego $n$ odcinków, który
+reprezentuje podział przestrzeni. Oprócz mapy $\mathscr{T}(S)$,
+algorytm tworzy strukturę $\mathscr{D}$ pozwalającą odpowiadać
+na zapytania lokalizacji punktu. Mapa trapezowa $\mathscr{T}(S)$
+budowana jest w sposób przyrostowy poprzez dodawanie
+kolejnych odcinków z $S$ i tworzenie pionowych przedłużeń wychodzących 
+z ich wierzchołków i kończących się po napotkaniu innego odcinka.
+Kolejność dodawania odcinków z $S$ wpływa na wielkość 
+i czas odpowiedzi na zapytania struktury $\mathscr{D}$, 
+jednak przy użyciu metody randomizacji, jesteśmy w stanie 
+założyć \cite[s. 133-136]{compgeo}, że złożoność pamięciowa 
+struktury $\mathscr{D}$ jest rzędu $O(n)$, a czas odpowiedzi 
+na zapytanie rzędu $O(logn)$.
+Ostatecznie, randomizowany algorytm przyrostowy budujący mapę
+$\mathscr{T}(S)$ i strukturę $\mathscr{D}$ ma oczekiwaną 
+złożoność obliczeniową $O(nlogn)$.
+
+Podział trapezowy przyjmuje następujące założenia dla
+zbioru $S$:
+\begin{enumerate}
+    \item Odcinki nie przecinają się.
+    \item Wierzchołki odcinków mają parami różne współrzędne $x$.
+\end{enumerate}
+
+Zbiór $S$ spełniający powyższe założenia jest w \textit{położeniu ogólnym}.
+
+Jesteśmy w stanie pozbyć się założenia 2 poprzez dokonanie
+\textit{przekształcenia ścinającego} na odcinkach z $S$
+o dostatecznie mały kąt $\varphi$ i stworzenie mapy trapezowej
+dla nowo powstałego zbioru $\varphi S$, który już jest 
+w \textit{położeniu ogólnym}.
+Okazuje się jednak \cite[s. 137-139]{compgeo},
+że przekształcenie to może pozostać jedynie w domyśle i
+przy sprawdzaniu czy dany punkt leży na lewo od drugiego
+wystaczy porównywać je leksykograficznie.
+
+\subsubsection{Struktura mapy trapezowej}
+Mapa trapezowa $\mathscr{T}(S)$ reprezentowana 
+jest jako graf trapezów. Każdy stworzony trapez 
+ma dwa boki pionowe (uznajemy także boki o długości zerowej).
+Uznajemy, że dwa trapezy ze sobą sąsiadują gdy 
+posiadają wspólną pionową ścianę. Dla zbioru
+$S$ w \textit{położeniu ogólnym}, każdy trapez
+ma maksymalnie czterech sąsiadów, do których
+przechowujemy wskaźniki. Każdy trapez zawiera
+także wskaźnik do odpowiadającego mu węzła
+w strukturze przeszukiwań $\mathscr{D}$.
+
+\subsubsection{Struktura przeszukiwań}
+Struktura przeszukiwań $\mathscr{D}$ reprezentowana
+jest przez \textit{acykliczny graf skierowany} 
+przypominający strukturą drzewo binarne. Struktura
+ta zawiera trzy typy węzłów:
+\begin{enumerate}
+    \item Węzeł trapezu
+    - zawiera wskaźnik do trapezu w mapie $\mathscr{T}(S)$
+    \item Węzeł wierzchołka
+    - zawiera wskaźnik do jednego z wierzchołków odcinków z $S$
+    oraz wskaźniki do dwóch węzłów-dzieci (lewego i prawego).
+    \item Węzeł odcinka
+    - zawiera jeden z odcinków z $S$
+    oraz wskaźniki do dwóch węzłów-dzieci (lewego i prawego).
+\end{enumerate}
+Zapytanie w strukturze przechodzi następująco:
+
+Zaczynamy w korzeniu grafu, w każdym węźle wierzchołka 
+testujemy czy zadany punkt leży na lewo czy na prawo od 
+trzymanego wierzchołka; jeżeli leży na prawo, to idziemy
+do lewego dziecka, a w przeciwnym przypadku idziemy do prawego.
+Analogicznie postępujemy w węzłach odcinka, tym razem jednak
+testując czy zadany punkt leży nad odcinkiem (idziemy w lewo),
+czy pod (idziemy w prawo). Jeżeli zadany punkt jest równy
+jednemu z wierzchołków, bądź leży na jednym z odcinków, to
+zwracamy odpowiednią informację.
+
+\subsubsection{Opis algorytmu}
+Algorytm w $i$-tym kroku buduje mapę $\mathscr{T}(S_i)$
+oraz strukturę $\mathscr{D}_i$ dla listy punktów 
+$S_i = (s_1, s_2, ..., s_i)$. Wynikiem jest mapa 
+$\mathscr{T}(S_n)$ oraz struktura $\mathscr{D}_n$,
+które zawierają wszystkie odcinki z $S$.
+Poszczególne kroki algorytmu przebiegają następująco:
+\begin{enumerate}
+    \item Tworzymy prostokąt (trapez), w którym zawiera się
+    każdy odcinek w $S$ i za jego pomocą inicjalizujemy
+    strukturę $\mathscr{T}(S_0) := \mathscr{T}(\emptyset)$.
+    \item Tworzymy listę $S_n = (s_1, s_2, ..., s_n)$ bedącą
+    losową permutacją odcinków ze zbioru $S$.
+    \item Dla każdego $i = 1, 2, ..., n$ powtarzamy:
+    \begin{enumerate}
+        \item Znajdujemy w obecnej mapie $\mathscr{T}(S_{i - 1})$
+        trapezy $\Delta_1, \Delta_2, ..., \Delta_k$ przecięte
+        przez odcinek $s_i$ (przecięcie tylko na wierzchołkach
+        nie jest liczone).
+        \item Usuwamy z $\mathscr{T}(S_{i - 1})$ trapezy
+        $\Delta_1, \Delta_2, ..., \Delta_k$ zamieniając je
+        na trapezy powstałe po dodaniu $s_i$. Otrzymujemy
+        w ten sposób mapę $\mathscr{T}(S_i)$
+        \item Usuwamy z $\mathscr{D}_{i - 1}$ węzły odpowiadające
+        trapezom $\Delta_1, \Delta_2, ..., \Delta_k$
+        i dodajemy węzły dla nowych trapezów odpowiednio
+        je łącząc za pomocą węzłów wierzchołków i odcinków.
+    \end{enumerate}
+    \item Zwracamy $\mathscr{T}(S_n)$ jako wynik.
+\end{enumerate}
+
+Krok 3.(a) jesteśmy w stanie wykonać wykorzystując 
+połączenia sąsiedzkie trapezów w mapie. Najpierw znajdujemy
+trapez $\Delta_1$, wykonując zapytanie w strukturze $\mathscr{D}_{i - 1}$
+dla punktu będącego lewym wierzchołkiem odcinka $s_i$.
+Następnie podążamy wzdłuż odcinka $s_i$ przechodząc po i dodając do
+listy przeciętych trapezów odpowiednich sąsiadów w mapie. Kończymy
+po napotkaniu prawego wierzchołka odcinka $s_i$.
+Dokładna implementacja wszystkich kroków algorytmu
+znajduje się w załączonym programie opisanym 
+w \hyperlink{section.3}{sekcji 3}. Opis każdego 
+poszczególnego kroku algorytmu można znaleźć także
+w: \cite[s. 129-133]{compgeo}
 
 \subsection{Specyfikacja środowiska użytego do obliczeń}
 
@@ -60,8 +199,20 @@
 
 \subsection{Analiza efektywności algorytmu}
 
+\section{Dokumentacja}
+
+\subsection{Część użytkownika}
+
+\subsection{Część techniczna}
+
 \section{Podsumowanie}
 
-\section{Bibliografia}
+\begin{thebibliography}{999}
+\bibitem{compgeo}
+    M. van de Berg, M. van Kreveld, M. Overmars, and O. Schwarzkopf,
+    (1997)
+    \emph{Computational Geometry},
+    Springer.
+\end{thebibliography}
 
 \end{document}
