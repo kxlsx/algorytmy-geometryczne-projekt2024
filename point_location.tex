@@ -29,6 +29,15 @@
 \usepackage{siunitx}
 \usepackage[mathscr]{euscript}
 
+\title{
+    \includegraphics[scale=0.55]{./res/logos/agh_logo_text_sym.jpg}
+    \vfill
+    Lokalizacja punktów w przestrzeni
+    metodą trapezową.
+}
+\author{Łukasz Dragon, Rafał Babski}
+\date{Algorytmy Geometryczne 2024/2025, grupa 1}
+
 \sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
 
 \renewcommand{\baselinestretch}{1.18}
@@ -36,17 +45,22 @@
 
 \pagestyle{fancy}
 \fancyhead[L]{
-    \includegraphics[scale=0.16]{./agh_logo_text_asym.jpg}
+    \includegraphics[scale=0.16]{./res/logos/agh_logo_text_asym.jpg}
 }
 \fancyhead[R]{
-    Lokalizacja punktów w przestrzeni dwuwymiarowej - metoda trapezowa
+    Lokalizacja punktów w przestrzeni dwuwymiarowej metodą trapezową
     \\
     Łukasz Dragon, Rafał Babski
 }
 
 \begin{document}
 
+\maketitle
+\tableofcontents
+\pagebreak
+
 \section{Wstęp}
+
 Celem projektu była implementacja algorytmu rozwiązującego
 problem lokalizacji punktu w przestrzeni dwuwymiarowej 
 metodą trapezową. W \hyperlink{section.2}{sekcji 2} znajduje się opis teoretyczny
@@ -194,16 +208,335 @@ poszczególnego kroku algorytmu można znaleźć także
 w: \cite[s. 129-133]{compgeo}
 
 \subsection{Specyfikacja środowiska użytego do obliczeń}
+Wyniki pokazane w sprawozdaniu zostały wygenerowane przy
+użyciu interpretera języka Python wersji 3.9. Losowe 
+zbiory odcinków przygotowane zostały przy pomocy biblioteki
+\verb|numpy|. Wykresy i wizualizacja stworzonych przez
+algorytm podziałów trapezowych została przygotowana za
+pomocą narzędzia przygotowanego przez koło naukowe Bit,
+dostępnego pod adresem: 
+\emph{\hyperlink{https://github.com/aghbit/Algorytmy-Geometryczne}
+{https://github.com/aghbit/Algorytmy-Geometryczne}}
+Do przygotowania interaktywnego interfejsu pozwalającego
+na zadawanie własnych zbiorów odcinków użyta została
+biblioteka \verb|matplotlib|.
+Wyniki przedstawione w tabelach: TODO: zostały wygenerowane
+na komputerze z systemem operacyjnym Debian 12 i procesorem
+AMD Ryzen 5 3600 3.6GHz.
 
 \subsection{Testy i wizualizacja}
+Przygotowaliśmy cztery zbiory odcinków w celu sprawdzenia
+poprawności i wizualizacji działania algorytmu. Zbiory te
+przedstawione są na rysunku 1. Rysunki 2, 3, 4, 5 zawierają
+wizualizację map trapezowych wygenerowanych przez algorytm
+kolejno dla zbiorów: A, B, C i D. Sekcje od 2.3.1 do 2.3.4 % TODO: Links?
+zawierają także krótki komentarz na temat poszczególnych
+zbiorów.
+
+Animacje krokowe budowy mapy dla wspomnianych zbiorów
+dostępne są do wygenerowania w pliku \textit{notatnika Python}
+\verb|point_location.ipynb| (w tym celu należy zapoznać się
+z dokumentacją w \hyperlink{section.3}{sekcji 3}).
+Ponadto, wspomniane animacje zawarte są z projektem w formie
+plików z rozszerzeniem \verb|gif|. Pliki te mają nazwy:
+\verb|test_a_map.gif|, \verb|test_b_map.gif|,
+\verb|test_c_map.gif|, \verb|test_d_map.gif|
+i odpowiadają one kolejno zbiorom: A, B, C, D.
+
+Animacje dla zbiorów zadanych przez użytkownika
+dostępne są do wygenerowania w pliku: \\\verb|point_location.ipynb|.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{res/figs/test_a.png}
+        \caption{
+            Zbiór A
+        }
+    \end{subfigure}
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{res/figs/test_b.png}
+        \caption{
+            Zbiór B
+        }
+    \end{subfigure}
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{res/figs/test_c.png}
+        \caption{
+            Zbiór C
+        }
+    \end{subfigure}
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[scale=0.4]{res/figs/test_d.png}
+        \caption{
+            Zbiór D
+        }
+    \end{subfigure}
+    \caption{Wybrane zbiory testowe}
+\end{figure}
+
+\subsubsection{Zbiór A}
+Zbiór ten został przygotwany w celu sprawdzenia
+czy algorytm poprawnie tworzy i scala trapezy.
+Rysunek 2 zawiera wizualizację wygenerowanej mapy.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/test_a_map.png}
+    \caption{Mapa trapezowa wygenerowana dla zbioru A}
+\end{figure}
+
+\subsubsection{Zbiór B}
+Zbiór ten został przygotowany w celu sprawdzenia
+czy algorytm poprawnie radzi sobie w przypadku,
+gdy odcinki łączą się w jednym punkcie. Rysunek 3
+zawiera wizualizację wygenerowanej mapy.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/test_b_map.png}
+    \caption{Mapa trapezowa wygenerowana dla zbioru B}
+\end{figure}
+
+\subsubsection{Zbiór C}
+Zbiór ten został przygotowany w celu sprawdzenia
+czy algorytm poprawnie tworzy trapezy gdy każdy
+odcinek zawiera się całkowicie wewnątrz jednego
+trapezu. Rysunek 4 zawiera wizualizację wygenerowanej mapy.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/test_c_map.png}
+    \caption{Mapa trapezowa wygenerowana dla zbioru C}
+\end{figure}
+
+\subsubsection{Zbiór D}
+Zbiór ten został wygenerowany losowo i sprawdza
+zarówno przypadki, w których odcinki zawierają się
+w jednym trapezie, jak i w wielu. Rysunek 5
+zawiera wizualizację wygenerowanej mapy.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/test_d_map.png}
+    \caption{Mapa trapezowa wygenerowana dla zbioru D}
+\end{figure}
 
 \subsection{Analiza efektywności algorytmu}
+TODO:
+W celu analizy efektywności napisanego przez nas programu
+przygotowaliśmy funkcję generującą losowy zbiór 
+poziomych odcinków. Na tak przygotowanych zbiorach,
+dla różnych liczb odcinków $n$, zmierzyliśmy średni
+czas budowy mapy trapezowej przy pięciu wywołaniach.
+Oprócz tego zliczyliśmy liczbę węzłów w wygenerowanych
+strukturach przeszukiwań w celu oszacowania złożoności
+pamięciowej programu (brana jest pod uwagę tylko mapa
+z próby nr 1). Ostatecznie, zmierzyliśmy średni czas
+wykonania zapytania lokalizacji punktu w wygenerowanych
+mapach dla 10000 losowo wygenerowanych punktów.
+
+Tabela 1 zawiera wszystkie pomiary dla poszczególnych
+wartości $n$. Rysunki 6, 7, 8 zawierają wykresy
+poszczególnych zależności z tabeli 1 przyrównane do wykresów
+funkcji rzędu oczekiwanych złożoności, czyli:
+\begin{itemize}
+    \item Rysunek 6 
+    - Zależność czasu wykonania budowy mapy od $n$. 
+    Oczekiwana złożoność $O(nlogn)$
+    \item Rysunek 7
+    - Zależność wielkości grafu przeszukiwań od $n$. 
+    Oczekiwana złożoność $O(n)$
+    \item Rysunek 8 
+    - Zależność czasu wykonania zapytania lokalizacji punktu od $n$. 
+    Oczekiwana złożoność $O(logn)$
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+        n & czas budowy & liczba wezlow & czas zapytania \\ \hline
+        10 & 0,0023 & 106 & 0,000005872006416 \\ \hline
+        50 & 0,009 & 1651 & 0,000007902321815 \\ \hline
+        100 & 0,0111 & 6329 & 0,00000831735611 \\ \hline
+        500 & 0,0654 & 394117 & 0,00001090270996 \\ \hline
+        1000 & 0,1456 & 2196586 & 0,00001125213623 \\ \hline
+        5000 & 0,8821 & 52038433 & 0,00001535305977 \\ \hline
+        10000 & 2,0014 & 92989062 & 0,00001645922184 \\ \hline
+        50000 & 11,4103 & - & 0,00002070988655 \\ \hline
+        100000 & 25,3333 & - & 0,00002333058357 \\ \hline
+        500000 & 144,9936 & - & 0,00002739641666 \\ \hline
+        1000000 & 319,7159 & - & 0,00003165314674 \\ \hline
+    \end{tabular}
+    \caption{TODO:}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/build_times_graph.png}
+    \caption{Zależność czasu wykonania budowy mapy od $n$.}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/build_sizes_graph.png}
+    \caption{Zależność wielkości grafu przeszukiwań od $n$.}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{./res/figs/query_times_graph.png}
+    \caption{Zależność czasu wykonania zapytania lokalizacji punktu od $n$.}
+\end{figure}
+
 
 \section{Dokumentacja}
 
+Program napisany w ramach projektu podzielony jest
+na dwa pliki: \verb|point_location.ipynb| \\
+oraz \verb|creator.py|. Pierwszy z nich jest plikiem
+\textit{notatnika Python} przygotowanym w celach dydaktycznych
+dla użytkownika. Zawiera implementację, wizualizację na przykładach 
+oraz możliwość testowania algorytmu na przygotowanych interaktywnie
+zbiorach odcinków. Drugi jest natomiast plikiem
+zawierającym kod realizujący interfejs graficzny dostępny w notatniku.
+
+Sekcja 3.1 zawiera instrukcje potrzebne do wykonania programu,
+sekcja 3.2 zawiera dokumentację skierowaną do użytkownika, %TODO: Links?
+a sekcja 3.3 opisuje dokładnie najważniejsze funkcje, metody
+i obiekty stworzone w celu implementacji algorytmu.
+
+\subsection{Instrukcja wykonania programu}
+Notatnik \verb|point_location.ipynb| należy wykonać
+wewnątrz środowiska dostępnego w narzędziu 
+przygotowanym przez studentów z koła naukowego Bit, 
+które jest dostępne pod adresem:
+\\
+\emph{\hyperlink{https://github.com/aghbit/Algorytmy-Geometryczne}
+{https://github.com/aghbit/Algorytmy-Geometryczne}}
+\\
+Program należy wykonywać w ten sam sposób co
+zawarte w narzędziu programy przygotowane na laboratoria.
+
 \subsection{Część użytkownika}
+W celu uruchomienia programu należy po kolei
+wykonywać komórki wewnątrz notatnika \\
+\verb|point_location.ipynb|. Plik ten zawiera
+krótkie opisy problemu, algorytmu oraz zaimplementowanych
+przez nas struktur. Oprócz tego nad każdą metodą i obiektem
+znajdują się komentarze tłumaczące ich cel i działanie.
+
+Pod nagłówkiem \emph{"Interaktywne zadawanie zbioru odcinków"}
+znajduje się odpowiednio komórka, której wykonanie otworzy
+okno pozwalające na interaktywne zadawanie zbioru odcinków.
+Kliknięcie lewym przyciskiem myszy w dwóch miejscach stworzy odcinek. 
+Program nie pozwoli na stworzenie odcinka przecinającego się z innym.
+Przycisk \emph{"Wyczyść"} usuwa wszystkie stworzone odcinki.
+Odcinki można zapisać do pliku o formacie \verb|json| po kliknięciu
+przycisku \emph{"Zapisz"}. Alternatywnie do zadawania odcinków myszką,
+możliwe jest wygenerowanie zbioru odcinków losowo po wciśnięciu
+przycisku \emph{"Wygeneruj losowo odcinki"}, wpisaniu interesujących
+nas parametrów i zatwierdzeniu przyciskiem \emph{"OK"}. Zamknięcie
+okna możliwe jest przy pomocy przycisku \emph{"OK"}.
+
+Po wygenerowaniu zbioru odcinków, wywołanie kolejnej komórki
+wypisze na ekran ich współrzędne oraz wyświetli krokową
+wizualizację budowy mapy trapezowej na zadanym przez użytkownika
+zbiorze.
+
+Następne komórki zawierają kod generujący animacje krokowe
+dla wybranych zbiorów testowych oraz dane potrzebne do
+analizy efektywności algorytmu.
 
 \subsection{Część techniczna}
+Algorytm budujący podział trapezowy dla zadanego
+zbioru odcinków skupiony jest wewnątrz funkcji
+\verb|build_trapezoidal_map|. Funkcja ta zwraca
+obiekt \verb|TrapezoidalMap|, który zawiera w sobie
+zarówno reprezentację mapy trapezowej, jak 
+i graf przeszukiwań. Dokładne kroki budowy 
+znajdują się wewnątrz metod obiektu \verb|TrapezoidalMap|.
+Oprócz obiektu mapy istnieją także następujące obiekty
+pomocnicze:
+\begin{itemize}
+    \item \verb|Trapezoid| - reprezentuje pojedynczy trapez, 
+    zawiera indeksy odcinków definiujących go z góry i z dołu 
+    (\verb|top| i \verb|bottom|) oraz indeksy wierzchołków
+    definiujących go z lewej i z prawej (\verb|leftp|, \verb|rightp|).
+    Metoda \verb|as_verticies| pozwala obliczyć dokładne współrzędne
+    wierzchołków trapezu.
+    \item \verb|TrapezoidNode| - reprezentuje węzeł trapezu
+    w grafie przeszukiwań. Zawiera wskaźniki do odpowiadającego
+    mu obiektu \verb|Trapezoid| oraz do wszystkich z jego
+    maksymalnie czterech sąsiadów (\verb|left_lower|, \verb|left_upper|, 
+    \verb|right_lower|, \verb|right_upper|). Posiada także wskaźniki
+    do własnych przodków w grafie.
+    \item \verb|XNode| - reprezentuje węzeł wierzchołka. Zawiera
+    indeks odpowiadającego mu punktu (\verb|x|) oraz
+    wskaźniki do lewego i prawego dziecka (\verb|left| i \verb|right|).
+    \item \verb|YNode| - reprezentuje węzeł odcinka. Zawiera
+    indeks odpowiadającego mu odcinka (\verb|edge|) oraz
+    wskaźniki do lewego i prawego dziecka (\verb|left| i \verb|right|).
+\end{itemize}
+Wszystkie obiekty typu \verb|Node| posiadają metodę \verb|follow|,
+która przyjmuje punkt i zwraca wskaźnik do dziecka, do którego
+powinniśmy dalej przejść. \verb|XNode| prowadzi do lewego
+dziecka gdy dany punkt leży po lewej od trzymanego wierzchołka
+i do prawego gdy leży po prawej. \verb|YNode| prowadzi do lewego
+dziecka gdy punkt leży ponad trzymanym odcinkiem i do prawego
+gdy leży pod. Jeżeli punkt znajduje się wewnątrz węzła
+(jest wewnątrz trapezu, jest już wierzchołkiem, bądź leży na odcinku)
+zwracana jest wartość \verb|None|.
+
+Obiekt \verb|TrapezoidalMap| zawiera w sobie wskaźnik do
+węzła korzenia (\verb|root|), indeks ostatnio dodanego wierzchołka
+oraz wskaźnik do listy odcinków (\verb|sections|). Inicjalizując
+obiekt tworzymy mapę zawierającą tylko jeden trapez - prostokąt,
+otaczający wszystkie odcinki.
+
+Opiszemy teraz najważniejsze metody obiektu \verb|TrapezoidalMap|:
+\begin{itemize}
+    \item \verb|advance_i| - dodaje kolejny odcinek z podanej 
+    listy do mapy, aktualizując wewnętrzną strukturę tak, aby
+    reprezentowała graf przeszukiwań i mapę trapezową uwzględniającą
+    nowo dodany odcinek.
+    \item \verb|find_section_zone| - zwraca listę trapezów
+    przeciętych przez podany odcinek.
+    \item \verb|partition_zone| - dzieli wszystkie trapezy
+    przecinane przez dany odcinek na mniejsze, aktualizując
+    sąsiedztwa i strukturę grafu przeszukiwań. Dzieli się 
+    na cztery przypadki rozważane w następujących metodach:
+    \begin{enumerate}
+        \item \verb|partition_one| - odcinek przecina dokładnie
+        jeden trapez i znajduje się całkowicie wewnątrz niego.
+        Zawsze tworzy cztery trapezy.
+        \item \verb|partition_one_tri_left| i \verb|partition_one_tri_right| -
+        przypadki symetryczne: odcinek przecina dokładnie jeden trapez,
+        lecz jeden z jego wierzchołków (lewy lub prawy) znajduje się już
+        w mapie. Zawsze tworzy trzy trapezy.
+        \item \verb|partition_multi| - odcinek przecina więcej niż jeden
+        trapez. Algorytm idzie wzdłuż odcinka, usuwając stare trapezy
+        i tworząc nowe, łącząc niektóre z nich w jeden.
+    \end{enumerate}
+    \item \verb|find| - zwraca węzeł w grafie przeszukiwań
+    zawierający dany punkt.
+    \item \verb|find_trapezoid| - działa analogicznie do \verb|find|,
+    lecz zawsze zwraca trapez. Gdy punkt jest już wierzchołkiem,
+    przyjmujemy, że leży on po prawo, a gdy leży na odcinku, to uznajemy,
+    że leży nad nim.
+    \item \verb|count_nodes| - zwraca liczbę węzłów grafu przeszukiwań.
+    \item \verb|get_trapezoids| - zwraca listę trapezów wewnątrz mapy.
+
+W celu wizualizacji kroków algorytmu stworzona została także
+metoda: \\ 
+\verb|build_trapezoidal_map_visualization| korzystająca 
+z narzędzia do wizualizacji przygotowanego przez koło naukowe Bit.
+\end{itemize}
 
 \section{Podsumowanie}
 
