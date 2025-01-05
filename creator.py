@@ -48,27 +48,37 @@ class Creator:
         return True
     
     
-    def has_overlap(self, x1, y1, x2, y2):
-        slope1 = (y2-y1)/(x2-x1)
-        y_intersection_1 = y1 - slope1*x1
+    def orient(self, x1, y1, x2, y2, x3, y3):
+        val = (y2 - y1) * (x3 - x2) - (x2 - x1) * (y3 - y2)
         
+        if val == 0:
+            return 0
+        return 1 if val > 0 else 2
+    
+    
+    def on_segment(self, x1, y1, x2, y2, x3, y3):
+        return x2 <= max(x1, x3) and x2 >= min(x1, x3) and y2 <= max(y1, y3) and y2 >= min(y1, y3)
+    
+    
+    def has_overlap(self, x1, y1, x2, y2):
         for point1, point2 in self.segments:
-            slope2 = (point2[1]-point1[1])/(point2[0]-point1[0])
-            y_intersection_2 = point1[1] - slope2*point1[0]
+            o1 = self.orient(x1, y1, x2, y2, point1[0], point1[1])
+            o2 = self.orient(x1, y1, x2, y2, point2[0], point2[1])
+            o3 = self.orient(point1[0], point1[1], point2[0], point2[1], x1, y1)
+            o4 = self.orient(point1[0], point1[1], point2[0], point2[1], x2, y2)
             
-            if slope1 == slope2:
-                if y_intersection_1 == y_intersection_2:
-                    
-                    if (x1 < point1[0] < x2) or (x1 < point2[0] < x2):
-                        return True 
+            if o1 != o2 and o3 != o4:
+                return True
             
-            else:
-                x = (y_intersection_2 - y_intersection_1)/(slope1 - slope2)
-                y = slope1*x + y_intersection_1
-                
-                if (x1 < x < x2) and (min(y1, y2) < y < max(y1, y2)) and (point1[0] < x < point2[0]) and (min(point1[1], point2[1]) < y < max(point1[1], point2[1])):
-                    return True
-                
+            if o1 == 0 and self.on_segment(x1, y1, x2, y2, point1[0], point1[1]):
+                return True
+            if o2 == 0 and self.on_segment(x1, y1, x2, y2, point2[0], point2[1]):
+                return True
+            if o3 == 0 and self.on_segment(point1[0], point1[1], point2[0], point2[1], x1, y1):
+                return True
+            if o4 == 0 and self.on_segment(point1[0], point1[1], point2[0], point2[1], x2, y2):
+                return True
+            
         return False
                 
                 
