@@ -9,3 +9,4 @@ tests
 *.log
 *.out
 *.synctex.gz
+*.toc

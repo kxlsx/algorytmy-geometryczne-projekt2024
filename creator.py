@@ -12,7 +12,6 @@ def load_from_file(filepath):
         segments = json.load(f)
     return segments
 
-
 class Creator:
     def __init__(self):
         plt.style.use('grayscale')
@@ -20,7 +19,11 @@ class Creator:
         self.fig, self.ax = plt.subplots()
         self.start_point = None
 
-        button_ax = self.fig.add_axes([0.1, 0.01, 0.15, 0.055])
+        button_ax = self.fig.add_axes([0.05, 0.01, 0.1, 0.055])
+        self.ok_button = Button(button_ax, 'OK')
+        self.ok_button.on_clicked(self.close_plt)
+
+        button_ax = self.fig.add_axes([0.2, 0.01, 0.15, 0.055])
         self.save_button = Button(button_ax, 'Zapisz')
         self.save_button.on_clicked(self.save_segments_to_file)
         
@@ -73,6 +76,12 @@ class Creator:
                 
                 
     def add_segment(self, x1, y1, x2, y2):
+        # algorytm oczekuje ze pierwszy wierzchołek
+        # jest po lewej 
+        if x1 > x2:
+            x1, x2 = x2, x1
+            y1, y2 = y2, y2
+        
         if self.is_vertical(x1, y1, x2, y2):
             self.start_point = None
             return False
@@ -184,7 +193,11 @@ class Creator:
         if filepath:
             with open(filepath, 'w') as f:
                 json.dump(self.segments, f)
-                
+    
+    def close_plt(self, event):
+        self.ax.set_title("Zamykam...")
+        plt.pause(0.5)
+        plt.close()
                 
     def clear(self, event):
         self.segments = []
@@ -204,5 +217,17 @@ class Creator:
         plt.show()
 
 
-creator = Creator()
-creator.run()
+if __name__ == "__main__":
+    #creator = Creator()
+    #creator.run()
+    #print(creator.segments)
+    with open("asasa", "w") as f:
+        json.dump(
+            [((np.float64(11.423310373047805), np.float64(33.90077153290685)), (np.float64(41.70360772011183), np.float64(86.75489415447134))), 
+             ((np.float64(11.423310373047805), np.float64(33.90077153290685)), (np.float64(53.50201186660301), np.float64(34.312621839048916))), 
+             ((np.float64(73.75707563254448), np.float64(34.86175558057166)), (np.float64(90.39759939984995), np.float64(34.03805496828754))), 
+             ((np.float64(73.75707563254448), np.float64(85.10749292990309)), (np.float64(90.39759939984995), np.float64(34.03805496828754))), 
+             ((np.float64(73.48428016094933), np.float64(56.82710524148158)), (np.float64(90.32940053195115), np.float64(34.17533840366823))), 
+             ((np.float64(11.423310373047805), np.float64(34.03805496828754)), (np.float64(37.543476778285466), np.float64(56.27797149995883)))], f)
+    
+
