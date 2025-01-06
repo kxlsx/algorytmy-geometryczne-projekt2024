@@ -1,7 +1,5 @@
 __init__.py
 __pycache__
-visualizer
-tests
 .ipynb_checkpoints/*
 *.aux
 *.fdb_latexmk
