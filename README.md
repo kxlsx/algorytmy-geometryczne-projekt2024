@@ -1,7 +1,7 @@
 # algorytmy-geometryczne-projekt2024
 
 Repozytorium zawiera projekt na laboratoria z
-z Algorytmów Geometrycznych na WI AGH 2024/2025
+Algorytmów Geometrycznych na WI AGH 2024/2025
 napisany przeze mnie i [rbabski](https://github.com/rbabski).
 
 ## Opis zadania
